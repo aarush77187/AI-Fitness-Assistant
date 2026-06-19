@@ -1,18 +1,41 @@
-Project: AI Fitness Assistant
+# AI Fitness Assistant
 
-Current Features:
-- BMI
-- BMR
-- Daily Calories
-- Protein Requirements
-- Workout Plans
-- Diet Suggestions
+A Python-based fitness assistant that helps users analyze their fitness status and receive personalized recommendations.
 
-Planned Features:
-- CSV Storage
-- Streamlit UI
-- AI Integration
-- User History Tracking
+## Features
 
-Current Status:
-Fitness Assistant V1
+- BMI Calculation
+- Fitness Status Detection
+- Goal Recommendation (Fat Loss / Muscle Gain / Maintain Weight)
+- BMR Calculation
+- Daily Calorie Estimation
+- Target Calorie Recommendation
+- Protein Requirement Estimation
+- Workout Plan Recommendation
+- CSV Data Storage
+- Input Validation and Exception Handling
+
+## Technologies Used
+
+- Python
+- Object-Oriented Programming (OOP)
+- CSV
+- File Handling
+- Exception Handling
+
+## Project Structure
+
+AI-Fitness-Assistant/
+│
+├── main.py
+├── FitnessAssistant.py
+├── storage.py
+└── fitness_history.csv
+
+## Future Improvements
+
+- Streamlit Web Interface
+- User History Viewer
+- SQLite Database
+- Gemini API Integration
+- AI Generated Workout Plan

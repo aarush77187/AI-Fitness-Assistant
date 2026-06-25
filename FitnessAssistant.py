@@ -53,6 +53,8 @@ class FitnessAssistant:
         elif self.gender == "female":
             bmr=447.593 + (9.247 *self.weight) + (3.098 *self.height_cm) - (4.330 *self.age)
             return round(bmr,2)
+        else:
+            return "invalid gender"
         
     def daily_calories(self):
         if self.activity=="sedentary":

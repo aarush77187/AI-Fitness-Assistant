@@ -1,14 +1,11 @@
 import csv
+import os
 
 FILENAME = "fitness_history.csv"
 HEADERS = ["Name", "Age", "Gender", "Height", "Weight", "Activity", "BMI", "Status", "Goal", "BMR", "Maintenance Calories", "Target Calories", "Protein (g/day)"]
 
 def save_data(person):
-    try:
-        with open(FILENAME, "r") as f:
-            file_exists = True
-    except FileNotFoundError:
-        file_exists = False
+    file_exists = os.path.exists(FILENAME)
 
     with open(FILENAME, "a", newline="") as file:
         writer = csv.writer(file)

@@ -198,13 +198,19 @@ elif menu == "View History":
 
             st.divider()
 
-            if "BMI" in df.columns:
-                st.subheader("BMI History")
-                st.line_chart(df["BMI"].astype(float))
+            if "Protein (g/day)" in df.columns:
 
-            if "Weight" in df.columns:
-                st.subheader("Weight History")
-                st.bar_chart(df["Weight"].astype(float))
+                    st.subheader("🥩 Protein Requirement")
+
+                    df["Protein (g/day)"] = pd.to_numeric(
+                        df["Protein (g/day)"],
+                        errors="coerce"
+                    )
+
+                    protein_df = df[["Protein (g/day)"]].dropna()
+
+                    if not protein_df.empty:
+                        st.bar_chart(protein_df)
 
             with open("fitness_history.csv", "rb") as file:
 

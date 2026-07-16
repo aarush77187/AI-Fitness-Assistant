@@ -165,17 +165,36 @@ elif menu == "View History":
 
             col1.metric("Total Records", len(df))
 
-            if "BMI" in df.columns:
-                col2.metric(
-                    "Average BMI",
-                    round(df["BMI"].astype(float).mean(), 2)
-                )
+           # Remove extra spaces from column names
+            df.columns = df.columns.str.strip()
 
+            # BMI Chart
+            if "BMI" in df.columns:
+
+                st.subheader("📈 BMI History")
+
+                df["BMI"] = pd.to_numeric(df["BMI"], errors="coerce")
+
+                bmi_df = df[["BMI"]].dropna()
+
+                if not bmi_df.empty:
+                    st.line_chart(bmi_df)
+                else:
+                    st.warning("No valid BMI data found.")
+
+            # Weight Chart
             if "Weight" in df.columns:
-                col3.metric(
-                    "Average Weight",
-                    round(df["Weight"].astype(float).mean(), 2)
-                )
+
+                st.subheader("⚖️ Weight History")
+
+                df["Weight"] = pd.to_numeric(df["Weight"], errors="coerce")
+
+                weight_df = df[["Weight"]].dropna()
+
+                if not weight_df.empty:
+                    st.bar_chart(weight_df)
+                else:
+                    st.warning("No valid Weight data found.")
 
             st.divider()
 

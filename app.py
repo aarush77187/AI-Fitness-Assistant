@@ -1,66 +1,200 @@
 import streamlit as st
+import pandas as pd
+import os
+
 from FitnessAssistant import FitnessAssistant
-from storage import save_data, view_history
-import csv
+from storage import save_data
 
-st.title("AI Fitness Assistant")
+st.set_page_config(
+    page_title="AI Fitness Assistant",
+    page_icon="🏋️",
+    layout="wide"
+)
 
-menu = st.sidebar.selectbox("Menu", ["Add Person", "View History"])
+# ---------------- HEADER ---------------- #
+
+st.title("🏋️ AI Fitness Assistant")
+st.caption("BMI • BMR • Calories • Protein • Diet • Workout Planner")
+
+st.sidebar.title("Navigation")
+menu = st.sidebar.selectbox(
+    "Choose an option",
+    ["Add Person", "View History"]
+)
+
+# ==========================
+# ADD PERSON
+# ==========================
 
 if menu == "Add Person":
+
     st.header("Enter Your Details")
 
-    name = st.text_input("Name")
-    gender = st.selectbox("Gender", ["male", "female"])
-    age = st.number_input("Age", min_value=1, max_value=100, step=1)
-    height = st.number_input("Height (cm)", min_value=50.0, max_value=250.0)
-    weight = st.number_input("Weight (kg)", min_value=10.0, max_value=300.0)
-    activity = st.selectbox("Activity Level", [
-        "sedentary", "lightly active", "moderately active", "very active"
-    ])
+    col1, col2 = st.columns(2)
 
-    if st.button("Generate"):
+    with col1:
+        name = st.text_input("Name")
+        gender = st.selectbox("Gender", ["male", "female"])
+        age = st.number_input(
+            "Age",
+            min_value=1,
+            max_value=100,
+            step=1
+        )
+
+    with col2:
+        height = st.number_input(
+            "Height (cm)",
+            min_value=50.0,
+            max_value=250.0
+        )
+
+        weight = st.number_input(
+            "Weight (kg)",
+            min_value=10.0,
+            max_value=300.0
+        )
+
+        activity = st.selectbox(
+            "Activity Level",
+            [
+                "sedentary",
+                "lightly active",
+                "moderately active",
+                "very active"
+            ]
+        )
+
+    if st.button("Generate Report"):
+
         if name.strip() == "":
-            st.error("Please enter a name.")
+            st.error("Please enter your name.")
+
         else:
+
             try:
-                person = FitnessAssistant(name, gender, int(age), height, weight, activity)
+
+                person = FitnessAssistant(
+                    name,
+                    gender,
+                    int(age),
+                    height,
+                    weight,
+                    activity
+                )
+
                 save_data(person)
 
-                st.success(f"Results for {person.name}")
-                col1, col2, col3 = st.columns(3)
-                col1.metric("BMI", person.bmi)
-                col2.metric("Status", person.status())
-                col3.metric("Goal", person.goal())
+                st.success("Report Generated Successfully")
 
-                col4, col5, col6 = st.columns(3)
-                col4.metric("BMR", person.bmr())
-                col5.metric("Maintenance Cal", person.daily_calories())
-                col6.metric("Target Cal", person.target_calories())
+                st.divider()
 
-                st.metric("Protein", f"{person.protein_requirement()} g/day")
-                st.info(f"Diet: {person.diet_plan()}")
+                c1, c2, c3 = st.columns(3)
 
-                st.subheader("Workout Plan")
-                for item in person.workout_plan():
-                    st.write("•", item)
+                c1.metric("BMI", round(person.bmi, 2))
+                c2.metric("Status", person.status())
+                c3.metric("Goal", person.goal())
+
+                c4, c5, c6 = st.columns(3)
+
+                c4.metric("BMR", round(person.bmr(), 2))
+                c5.metric("Maintenance Calories",
+                          round(person.daily_calories(), 2))
+                c6.metric("Target Calories",
+                          round(person.target_calories(), 2))
+
+                st.metric(
+                    "Protein Requirement",
+                    f"{person.protein_requirement()} g/day"
+                )
+
+                # BMI STATUS
+
+                if person.bmi < 18.5:
+                    st.warning("⚠ Underweight")
+
+                elif person.bmi < 25:
+                    st.success("✅ Healthy Weight")
+
+                elif person.bmi < 30:
+                    st.warning("⚠ Overweight")
+
+                else:
+                    st.error("❌ Obese")
+
+                st.progress(min(person.bmi / 40, 1.0))
+
+                with st.expander("🥗 Diet Plan", expanded=True):
+                    st.write(person.diet_plan())
+
+                with st.expander("💪 Workout Plan", expanded=True):
+
+                    workout = person.workout_plan()
+
+                    if isinstance(workout, list):
+                        for exercise in workout:
+                            st.write("•", exercise)
+                    else:
+                        st.write(workout)
 
             except ValueError as e:
                 st.error(str(e))
 
+# ==========================
+# HISTORY
+# ==========================
+
 elif menu == "View History":
-    st.header("Fitness History")
-    try:
-        with open("fitness_history.csv", "r") as file:
-            reader = csv.reader(file)
-            rows = list(reader)
-            if len(rows) <= 1:
-                st.info("No history yet.")
-            else:
-                headers = rows[0]
-                data = rows[1:]
-                st.dataframe(
-                    [dict(zip(headers, row)) for row in data]
+
+    st.header("📋 Fitness History")
+
+    if os.path.exists("fitness_history.csv"):
+
+        df = pd.read_csv("fitness_history.csv")
+
+        if df.empty:
+            st.info("No history available.")
+
+        else:
+
+            st.dataframe(df, use_container_width=True)
+
+            st.divider()
+
+            col1, col2, col3 = st.columns(3)
+
+            col1.metric("Total Records", len(df))
+
+            if "BMI" in df.columns:
+                col2.metric(
+                    "Average BMI",
+                    round(df["BMI"].astype(float).mean(), 2)
                 )
-    except FileNotFoundError:
-        st.info("No history yet.")
+
+            if "Weight" in df.columns:
+                col3.metric(
+                    "Average Weight",
+                    round(df["Weight"].astype(float).mean(), 2)
+                )
+
+            st.divider()
+
+            if "BMI" in df.columns:
+                st.subheader("BMI History")
+                st.line_chart(df["BMI"].astype(float))
+
+            if "Weight" in df.columns:
+                st.subheader("Weight History")
+                st.bar_chart(df["Weight"].astype(float))
+
+            with open("fitness_history.csv", "rb") as file:
+
+                st.download_button(
+                    label="📥 Download History",
+                    data=file,
+                    file_name="fitness_history.csv",
+                    mime="text/csv"
+                )
+
+    else:
+        st.info("No history found.")

@@ -164,6 +164,11 @@ elif menu == "View History":
             col1, col2, col3 = st.columns(3)
 
             col1.metric("Total Records", len(df))
+            if "BMI" in df.columns:
+                col2.metric("Average BMI", round(df["BMI"].astype(float).mean(), 2))
+
+            if "Weight" in df.columns:
+                col3.metric("Average Weight", round(df["Weight"].astype(float).mean(), 2))
 
            # Remove extra spaces from column names
             df.columns = df.columns.str.strip()

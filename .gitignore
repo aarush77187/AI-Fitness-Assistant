@@ -1,3 +1,4 @@
+.env
 __pycache__/
 *.pyc
 fitness_history.csv

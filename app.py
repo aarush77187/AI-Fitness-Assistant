@@ -4,6 +4,36 @@ import os
 
 from FitnessAssistant import FitnessAssistant
 from storage import save_data
+from google import genai
+from dotenv import load_dotenv
+load_dotenv()
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+def generate_ai_plan(person):
+    prompt = f"""
+You are a fitness expert. Generate a personalized fitness plan for:
+- Name: {person.name}
+- Age: {person.age}
+- Gender: {person.gender}
+- BMI: {person.bmi} ({person.status()})
+- Goal: {person.goal()}
+- Activity Level: {person.activity}
+- Target Calories: {person.target_calories()} kcal/day
+- Protein Target: {person.protein_requirement()}g/day
+
+Give:
+1. A 7-day workout plan (specific exercises with sets/reps)
+2. A sample daily meal plan hitting the calorie and protein targets
+3. 3 key tips for their goal
+
+Be specific and practical. Format clearly.
+"""
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
+    return response.text
 
 st.set_page_config(
     page_title="AI Fitness Assistant",
@@ -128,14 +158,17 @@ if menu == "Add Person":
                     st.write(person.diet_plan())
 
                 with st.expander("💪 Workout Plan", expanded=True):
-
                     workout = person.workout_plan()
-
                     if isinstance(workout, list):
                         for exercise in workout:
                             st.write("•", exercise)
                     else:
                         st.write(workout)
+
+                with st.expander("🤖 AI Generated Plan", expanded=True):
+                    with st.spinner("Generating your personalized plan..."):
+                        ai_plan = generate_ai_plan(person)
+                    st.markdown(ai_plan)
 
             except ValueError as e:
                 st.error(str(e))

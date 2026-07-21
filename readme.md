@@ -96,7 +96,7 @@ python main.py
 
 ## 📸 Screenshots
 
-![App Screenshot](screenshot.png)
+![Results Screenshot](screenshots/screenshot2.png)
 
 ---
 

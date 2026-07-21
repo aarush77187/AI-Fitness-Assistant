@@ -6,7 +6,7 @@ from FitnessAssistant import FitnessAssistant
 from storage import save_data
 from google import genai
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(dotenv_path=r"C:\Users\aarus\OneDrive\Documents\python\project\.env")
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -30,7 +30,7 @@ Give:
 Be specific and practical. Format clearly.
 """
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-2.0-flash-lite",
         contents=prompt
     )
     return response.text
@@ -167,8 +167,11 @@ if menu == "Add Person":
 
                 with st.expander("🤖 AI Generated Plan", expanded=True):
                     with st.spinner("Generating your personalized plan..."):
-                        ai_plan = generate_ai_plan(person)
-                    st.markdown(ai_plan)
+                        try:
+                            ai_plan = generate_ai_plan(person)
+                            st.markdown(ai_plan)
+                        except Exception as e:
+                            st.warning("AI plan unavailable right now. Your stats above are still accurate.")
 
             except ValueError as e:
                 st.error(str(e))

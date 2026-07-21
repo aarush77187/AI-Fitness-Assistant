@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 fitness_history.csv
+.vscode

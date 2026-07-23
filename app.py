@@ -171,10 +171,7 @@ if menu == "Add Person":
                             ai_plan = generate_ai_plan(person)
                             st.markdown(ai_plan)
                         except Exception as e:
-                            st.warning("AI plan unavailable right now. Your stats above are still accurate.")
-
-            except ValueError as e:
-                st.error(str(e))
+                            st.error(f"Error: {e}")
 
 # ==========================
 # HISTORY

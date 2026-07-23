@@ -172,6 +172,8 @@ if menu == "Add Person":
                             st.markdown(ai_plan)
                         except Exception as e:
                             st.error(f"Error: {e}")
+            except ValueError as e:
+                st.error(str(e))
 
 # ==========================
 # HISTORY

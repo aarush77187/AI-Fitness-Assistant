@@ -25,7 +25,7 @@ A Python-based fitness assistant that calculates BMI, BMR, calories, protein req
 
 - **Python**
 - **Streamlit** — web interface
-- **Google Gemini API** — AI-generated fitness plans
+- **Groq AI (LLaMA 3.3) — AI-generated fitness plans
 - **CSV** — local data storage
 - **python-dotenv** — secure API key management
 
@@ -64,12 +64,12 @@ pip install -r requirements.txt
 
 Create a `.env` file in the project folder:
 ```
-GEMINI_API_KEY=your_api_key_here
+GROQ_API_KEY=your_api_key_here
 ```
 
-Get a free API key from [Google AI Studio](https://aistudio.google.com)
+Get a free API key from Groq Console — no billing required.
 
-> Note: Gemini API requires a Google Cloud account with billing enabled in some regions. New users get $300 free credits at [cloud.google.com/free](https://cloud.google.com/free)
+
 
 **4. Run the Streamlit app**
 ```bash
@@ -89,7 +89,7 @@ python main.py
 2. Click **Generate Report**
 3. Get your BMI, BMR, calorie targets, and protein requirement
 4. View your personalized diet and workout plan
-5. Get an AI-generated plan from Gemini
+5. Get an AI-generated plan from Groq AI
 6. All data saved to history with charts
 
 ---

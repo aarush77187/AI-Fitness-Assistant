@@ -4,11 +4,9 @@ import os
 
 from FitnessAssistant import FitnessAssistant
 from storage import save_data
-from google import genai
-from dotenv import load_dotenv
-load_dotenv(dotenv_path=r"C:\Users\aarus\OneDrive\Documents\python\project\.env")
+from groq import Groq
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def generate_ai_plan(person):
     prompt = f"""
@@ -29,12 +27,11 @@ Give:
 
 Be specific and practical. Format clearly.
 """
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-lite",
-        contents=prompt
+    response = groq_client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[{"role": "user", "content": prompt}]
     )
-    return response.text
-
+    return response.choices[0].message.content
 st.set_page_config(
     page_title="AI Fitness Assistant",
     page_icon="🏋️",

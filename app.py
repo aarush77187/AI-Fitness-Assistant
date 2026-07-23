@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from FitnessAssistant import FitnessAssistant
 from storage import save_data
